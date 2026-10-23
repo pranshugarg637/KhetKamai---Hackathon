@@ -21,7 +21,7 @@ export default function Buyer() {
   const buyer = buyers.find((b) => b.id === activeBuyerId) ?? buyers[0]
   const [type, setType] = useState<'all' | 'paddy' | 'wheat'>('all')
   const [grade, setGrade] = useState<'all' | Grade>('all')
-  const [maxKm, setMaxKm] = useState(60)
+  const [maxKm, setMaxKm] = useState(100)
   const [offerFor, setOfferFor] = useState<string | null>(null)
 
   const filtered = rows.filter((r) => (type === 'all' || r.l.residue === type) && (grade === 'all' || r.l.grade === grade) && r.dist <= maxKm)
@@ -72,7 +72,7 @@ export default function Buyer() {
               <Seg value={grade} set={setGrade} opts={[['all', 'All grades'], ['A', 'A'], ['B', 'B'], ['C', 'C']]} />
               <label className="flex items-center gap-2 rounded-xl border border-line px-3 py-1.5 font-bold">
                 <MapPin size={14} className="text-leaf" /> ≤ {maxKm} km
-                <input type="range" min={5} max={60} value={maxKm} onChange={(e) => setMaxKm(Number(e.target.value))} className="w-24 accent-[#215C3A]" />
+                <input type="range" min={5} max={100} value={maxKm} onChange={(e) => setMaxKm(Number(e.target.value))} className="w-24 accent-[#215C3A]" />
               </label>
             </div>
           </div>
@@ -105,7 +105,15 @@ export default function Buyer() {
                       <td className="py-3 pr-2"><GradePill grade={r.l.grade} /></td>
                       <td className="py-3 pr-2 text-right font-bold">{num(r.l.weighedTonnes ?? r.l.tonnes, 1)}</td>
                       <td className="py-3 pr-2 text-right text-muted">{r.dist} km</td>
-                      <td className="py-3 pr-2"><StatusPill status={r.l.status} /></td>
+                      <td className="py-3 pr-2">
+                        <StatusPill status={r.l.status} />
+                        {r.l.verified && (
+                          <div className={cn('mt-1 text-[11.5px] font-bold', r.l.verified === 'ok' ? 'text-leaf' : 'text-terracotta')}>
+                            {r.l.verified === 'ok' ? `✓ Weighbridge ${num(r.l.factoryTonnes ?? 0, 1)} t` : '⚠ Weight mismatch'}
+                          </div>
+                        )}
+                        {r.l.status === 'Paid' && !r.l.verified && <div className="mt-1 text-[11.5px] text-muted">In transit to factory…</div>}
+                      </td>
                       <td className="py-3 pr-2 text-right">
                         <div className="font-serif font-bold text-forest">{(r.accepted ?? r.best) ? inr((r.accepted ?? r.best)!.price) + '/t' : '—'}</div>
                         <div className={cn('text-[11.5px]', r.mineBest ? 'font-bold text-leaf' : 'text-muted')}>{r.mineBest ? 'Yours' : r.bestBuyer?.short ?? 'No offers yet'}</div>

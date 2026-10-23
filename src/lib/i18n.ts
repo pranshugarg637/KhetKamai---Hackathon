@@ -79,6 +79,7 @@ const DICT: Record<string, Entry> = {
   agent: { en: 'Your agent', hi: 'आपका एजेंट' },
   payAfter: { en: 'Payment by UPI right after weighing', hi: 'तौल के बाद तुरंत UPI से भुगतान' },
   cluster: { en: 'Shared pickup with 3 nearby farmers = lower transport cost', hi: 'पास के 3 किसानों के साथ साझा पिकअप = कम किराया' },
+  escrowLocked: { en: '₹{amount} already locked by the buyer — your money is safe', hi: '₹{amount} खरीदार ने पहले ही जमा कर दिए — आपका पैसा सुरक्षित है' },
   waitingPickup: { en: 'Waiting for agent pickup…', hi: 'एजेंट पिकअप का इंतज़ार…' },
 
   paidTitle: { en: 'Payment received', hi: 'भुगतान मिल गया' },

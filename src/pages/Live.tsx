@@ -149,7 +149,11 @@ function BuyerColumn() {
                     <Gavel size={13} /> Make offer
                   </button>
                 ) : (
-                  <StatusPill status={r.l.status} />
+                  <div className="flex flex-col items-end gap-1">
+                    <StatusPill status={r.l.status} />
+                    {r.l.verified === 'ok' && <span className="text-[10.5px] font-bold text-leaf">✓ Weighbridge</span>}
+                    {r.l.status === 'Paid' && !r.l.verified && <span className="text-[10.5px] text-muted">In transit…</span>}
+                  </div>
                 )}
               </div>
             </motion.div>

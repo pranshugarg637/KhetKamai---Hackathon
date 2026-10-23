@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 import { NavLink, Outlet, Link, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { BookOpen, ChevronDown, RotateCcw, Settings, X } from 'lucide-react'
@@ -55,7 +55,9 @@ export default function Layout() {
       </header>
 
       <main className="flex-1">
-        <Outlet />
+        <Suspense fallback={<div className="flex h-[60vh] items-center justify-center"><div className="h-9 w-9 animate-spin rounded-full border-4 border-sage border-t-forest" /></div>}>
+          <Outlet />
+        </Suspense>
       </main>
 
       {loc.pathname !== '/live' && (

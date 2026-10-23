@@ -32,9 +32,12 @@ export interface Listing {
   paidAmount?: number
   txnId?: string
   paidAt?: number
+  escrow?: number
+  factoryTonnes?: number
+  verified?: 'ok' | 'flag'
 }
 export interface Offer { id: string; listingId: string; buyerId: string; price: number; createdAt: number }
-export type EventType = 'photo' | 'grade' | 'listing' | 'offer' | 'accept' | 'pickup' | 'payment' | 'info'
+export type EventType = 'photo' | 'grade' | 'listing' | 'offer' | 'accept' | 'pickup' | 'payment' | 'info' | 'escrow' | 'verify'
 export interface ActivityEvent { id: string; type: EventType; text: string; time: number }
 export type MsgKind = 'text' | 'image' | 'sample' | 'voice' | 'analysing' | 'grade' | 'price' | 'pickup' | 'payment'
 export interface ChatMsg {
@@ -114,6 +117,8 @@ export function makeSeed() {
     { id: 'b2', name: 'Haryana Agro Paper Mill', short: 'Haryana Agro Paper', kind: 'Paper mill', lat: 29.78, lng: 76.45 },
     { id: 'b3', name: 'GreenCap Mushroom Farm', short: 'GreenCap Mushroom', kind: 'Mushroom', lat: 29.745, lng: 76.53 },
     { id: 'b4', name: 'Desi Gau Cattle Feed', short: 'Desi Gau Feed', kind: 'Cattle feed', lat: 30.03, lng: 76.36 },
+    { id: 'b5', name: 'Haryana 2G Ethanol Refinery', short: '2G Ethanol Refinery', kind: '2G ethanol', lat: 29.42, lng: 76.92 },
+    { id: 'b6', name: 'NCR Thermal Power (co-firing)', short: 'NCR Thermal Power', kind: 'Power plant', lat: 29.97, lng: 76.85 },
   ]
 
   const agents: Agent[] = [
@@ -127,7 +132,7 @@ export function makeSeed() {
     { id: 'l2', farmerId: 'f3', residue: 'paddy', grade: 'B', tonnes: 15, status: 'Matched', createdAt: now - 20 * H, details: det('paddy', 'B', 79, 'low', 'medium', 88), acceptedOfferId: 'o3', agentId: 'a1', pickupDate: now + 2 * H },
     { id: 'l3', farmerId: 'f4', residue: 'wheat', grade: 'B', tonnes: 7.5, status: 'Open', createdAt: now - 5 * H, details: det('wheat', 'B', 84, 'low', 'low', 90) },
     { id: 'l4', farmerId: 'f5', residue: 'paddy', grade: 'A', tonnes: 12.5, status: 'Matched', createdAt: now - 26 * H, details: det('paddy', 'A', 90, 'none', 'low', 94), acceptedOfferId: 'o5', agentId: 'a1', pickupDate: now + 4 * H },
-    { id: 'l5', farmerId: 'f6', residue: 'paddy', grade: 'C', tonnes: 20, status: 'Paid', createdAt: now - 3 * D, details: det('paddy', 'C', 58, 'high', 'medium', 86), acceptedOfferId: 'o6', agentId: 'a3', weighedTonnes: 19.6, paidAmount: 17318, txnId: '428917305512', paidAt: now - 1 * D },
+    { id: 'l5', farmerId: 'f6', residue: 'paddy', grade: 'C', tonnes: 20, status: 'Paid', createdAt: now - 3 * D, details: det('paddy', 'C', 58, 'high', 'medium', 86), acceptedOfferId: 'o6', agentId: 'a3', weighedTonnes: 19.6, paidAmount: 17318, txnId: '428917305512', paidAt: now - 1 * D, factoryTonnes: 19.4, verified: 'ok' },
     { id: 'l6', farmerId: 'f7', residue: 'paddy', grade: 'A', tonnes: 7.5, status: 'PickedUp', createdAt: now - 30 * H, details: det('paddy', 'A', 92, 'none', 'low', 95), acceptedOfferId: 'o7', agentId: 'a2', weighedTonnes: 7.7 },
     { id: 'l7', farmerId: 'f1', residue: 'wheat', grade: 'B', tonnes: 5, status: 'Paid', createdAt: now - 180 * D, details: det('wheat', 'B', 85, 'low', 'low', 89), acceptedOfferId: 'o8', agentId: 'a1', weighedTonnes: 5, paidAmount: 5687, txnId: '410298374651', paidAt: now - 178 * D },
     { id: 'l8', farmerId: 'f8', residue: 'paddy', grade: 'A', tonnes: 6.25, status: 'Open', createdAt: now - 40 * M, details: det('paddy', 'A', 89, 'none', 'low', 91) },

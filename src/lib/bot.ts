@@ -91,7 +91,7 @@ async function runGrading() {
     S().addEvent('grade', `AI graded Rajbir's parali: Grade ${details.grade}, ${details.confidence}% confidence`)
     const listingId = S().createListing({ farmerId: LIVE_FARMER_ID, residue: details.type, grade: details.grade, tonnes, details })
     await wait(700)
-    const [pa, pb] = seedOfferPrices(details.grade)
+    const [pa, pb] = seedOfferPrices(details.grade, S().settings.mandiRate)
     S().makeOffer(listingId, 'b1', pa)
     S().makeOffer(listingId, 'b2', pb)
     await botSay(() => {

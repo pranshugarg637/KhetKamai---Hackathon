@@ -5,9 +5,9 @@ import {
   type ResidueType, LIVE_AGENT_ID,
 } from './data/seed'
 import { uid, txnId, inr, num } from './lib/utils'
-import { COMMISSION, AGENT_FEE, round1 } from './lib/pricing'
+import { COMMISSION, AGENT_FEE, ESCROW_BUFFER, WEIGH_TOLERANCE, round1 } from './lib/pricing'
 
-export const STORE_KEY = 'khetkamai-demo-v1'
+export const STORE_KEY = 'khetkamai-demo-v2'
 
 interface Actions {
   setLang: (l: 'en' | 'hi') => void
@@ -22,6 +22,7 @@ interface Actions {
   makeOffer: (listingId: string, buyerId: string, price: number) => void
   acceptOffer: (listingId: string, offerId: string) => void
   completePickup: (listingId: string, weighed: number) => { amount: number; txn: string } | null
+  factoryCheck: (listingId: string) => void
   reset: () => void
 }
 
@@ -83,14 +84,16 @@ export const useStore = create<StoreState>()(
         if (!offer || !listing) return
         const buyer = s.buyers.find((b) => b.id === offer.buyerId)
         const farmer = s.farmers.find((f) => f.id === listing.farmerId)
+        const escrow = Math.round(listing.tonnes * offer.price * (1 + ESCROW_BUFFER))
         set({
           listings: s.listings.map((l) =>
             l.id === listingId
-              ? { ...l, status: 'Matched', acceptedOfferId: offerId, agentId: LIVE_AGENT_ID, pickupDate: Date.now() + 2 * 24 * 3600_000 }
+              ? { ...l, status: 'Matched', acceptedOfferId: offerId, agentId: LIVE_AGENT_ID, pickupDate: Date.now() + 2 * 24 * 3600_000, escrow }
               : l,
           ),
         })
         get().addEvent('accept', `${farmer?.name.split(' ')[0]} accepted ${inr(offer.price)}/t from ${buyer?.short}`)
+        get().addEvent('escrow', `${buyer?.short} pre-paid ${inr(escrow)} into KhetKamai escrow (held safely)`)
       },
 
       completePickup: (listingId, weighed) => {
@@ -126,7 +129,28 @@ export const useStore = create<StoreState>()(
           get().addMsg({ from: 'bot', kind: 'payment', listingId })
           get().setChat({ stage: 'paid' })
         }
+        // The truck reaches the buyer: factory weighbridge re-weighs the load (anti-fraud check).
+        setTimeout(() => get().factoryCheck(listingId), 4500)
         return { amount, txn }
+      },
+
+      factoryCheck: (listingId) => {
+        const s = get()
+        const l = s.listings.find((x) => x.id === listingId)
+        if (!l || l.status !== 'Paid' || l.verified) return
+        const offer = s.offers.find((o) => o.id === l.acceptedOfferId)
+        const buyer = s.buyers.find((b) => b.id === offer?.buyerId)
+        const agentW = l.weighedTonnes ?? l.tonnes
+        const factory = round1(agentW * (1 - Math.random() * 0.02))
+        const gap = Math.abs(agentW - factory) / agentW
+        const verified: 'ok' | 'flag' = gap <= WEIGH_TOLERANCE ? 'ok' : 'flag'
+        set({ listings: s.listings.map((x) => (x.id === listingId ? { ...x, factoryTonnes: factory, verified } : x)) })
+        get().addEvent(
+          'verify',
+          verified === 'ok'
+            ? `Weighbridge at ${buyer?.short ?? 'buyer'}: ${num(factory, 1)} t vs agent ${num(agentW, 1)} t ✓ within 3%`
+            : `Weighbridge mismatch at ${buyer?.short ?? 'buyer'}: ${num(factory, 1)} t vs agent ${num(agentW, 1)} t — agent fee held`,
+        )
       },
 
       reset: () => set({ ...makeSeed(), botTyping: false }),

@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import confetti from 'canvas-confetti'
 import { toast } from 'sonner'
 import {
-  Camera, CheckCircle2, CircleDollarSign, Droplets, Gavel, Loader2, MapPin, PackageCheck, ScanSearch, ShieldCheck, Sprout, Truck, Upload,
+  Camera, CheckCircle2, CircleDollarSign, Droplets, Gavel, Landmark, Loader2, MapPin, PackageCheck, ScanSearch, Scale, ShieldCheck, Sprout, Truck, Upload,
 } from 'lucide-react'
 import { useStore } from '../store'
 import type { EventType, Listing } from '../data/seed'
@@ -127,6 +127,8 @@ const evIcon: Record<EventType, { icon: any; bg: string }> = {
   pickup: { icon: Truck, bg: 'bg-leaf' },
   payment: { icon: CircleDollarSign, bg: 'bg-terracotta' },
   info: { icon: MapPin, bg: 'bg-muted' },
+  escrow: { icon: Landmark, bg: 'bg-mustard' },
+  verify: { icon: Scale, bg: 'bg-forest' },
 }
 
 export function ActivityFeed({ limit = 30, compact }: { limit?: number; compact?: boolean }) {
@@ -207,7 +209,8 @@ export function UpiFlow({ listing, onDone, onCancel, dense }: { listing: Listing
         <div className="mt-3 w-full space-y-1.5 rounded-xl bg-cream p-3 text-left text-[13px]">
           <div className="flex justify-between"><span className="text-muted">UPI Ref</span><span className="font-mono font-bold">{result?.txn}</span></div>
           <div className="flex justify-between"><span className="text-muted">Weighed</span><span className="font-bold">{num(w, 1)} t × {inr(price)}</span></div>
-          <div className="flex justify-between"><span className="text-muted">Agent fee earned</span><span className="font-bold text-leaf">+ ₹150</span></div>
+          <div className="flex justify-between"><span className="text-muted">Released from buyer escrow</span><span className="font-bold">{inr(result?.amount ?? amount)}</span></div>
+          <div className="flex justify-between"><span className="text-muted">Agent fee (after weighbridge check)</span><span className="font-bold text-leaf">+ ₹150</span></div>
         </div>
         <RoundBadge className="mt-3">Live UPI gateway — Round 3</RoundBadge>
         {onDone && <button onClick={onDone} className="btn-primary mt-4 w-full">Done</button>}
@@ -235,6 +238,12 @@ export function UpiFlow({ listing, onDone, onCancel, dense }: { listing: Listing
           {photo ? <PackageCheck size={16} /> : <Upload size={16} />} {photo ? 'Bale photo ✓' : 'Add bale photo'}
         </button>
       </div>
+      {listing.escrow && (
+        <div className="mt-3 flex items-center gap-2 rounded-xl bg-mustard/15 px-3 py-2 text-[12.5px] text-ink">
+          <ShieldCheck size={15} className="shrink-0 text-[#875c08]" />
+          <span>Buyer already pre-paid <b>{inr(listing.escrow)}</b> into escrow. Your tap releases the farmer’s share. No cash from your pocket.</span>
+        </div>
+      )}
       <div className="mt-3 flex items-end justify-between rounded-xl border border-dashed border-leaf/40 p-3">
         <div className="text-[12.5px] text-muted">Farmer receives<br /><span className="text-[11px]">after 6% platform fee</span></div>
         <div className="font-serif text-[28px] font-bold leading-none text-forest">{inr(amount)}</div>

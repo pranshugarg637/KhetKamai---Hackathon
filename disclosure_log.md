@@ -27,10 +27,13 @@ No other AI model was used to make this prototype. The prototype itself does **n
 
 | Item | Type | How it was used |
 |---|---|---|
-| WebFetch | Claude built-in tool | Tried to open our reference chat share link. The page did not load, so that chat was **not** used. |
+| WebFetch | Claude built-in tool | Tried to open our reference chat share link. The page did not load, so that chat was **not** used. Later used to read two news articles on straw demand (prompt 20). |
+| WebSearch | Claude built-in tool | Looked up current facts on paddy-straw demand: 2G ethanol and biomass co-firing (prompt 20) |
 | Bash, Read, Write, Edit, Grep | Claude built-in tools | Created the project files, ran `npm install`, `tsc` and `vite build`, and later updated this log |
 | Task list, SendUserMessage, SendUserFile | Claude app tools | Progress updates and delivering the zip file |
-| Device tools (`device_list_dir`, `device_commit_files`) | Claude desktop app (connected folder) | Checked and updated `disclosure_log.md` directly in the team's project folder on the laptop (prompt 16) |
+| pptx skill (Claude built-in skill) | Claude skill | Instructions for editing a PowerPoint template, validating it, and rendering slides to images for visual checks (prompt 18) |
+| python-pptx 1.0.2 (MIT), Pillow (MIT-CMU), LibreOffice (MPL-2.0), Poppler `pdftoppm` (GPL) | Open-source tools, used only to make the deck | Filled the template, cropped the screenshot, rendered PDF/images for checking |
+| Device tools (`device_list_dir`, `device_stage_files`, `device_commit_files`) | Claude desktop app (connected folder) | Updated `disclosure_log.md` (prompts 16, 18), saved the .pptx (prompt 22), and applied the prompt-23 code changes (prompt 24) directly in the team's project folder on the laptop |
 | Claude memory | Claude app feature | Claude had saved account context (team member's name and college). Team names in the app come from our own pitch deck. |
 | Skills | — | None loaded |
 | MCP servers / connectors | — | None called during the build |
@@ -42,6 +45,7 @@ No other AI model was used to make this prototype. The prototype itself does **n
 - Our own pitch deck: `KhetKamai_Vibe_Coders.pdf` (11 slides, Round 1)
 - A share link to an earlier Claude chat about the idea: `https://claude.ai/share/10cd8478-5f8c-4823-829c-1935e9f3d4e3` (could not be loaded, so it was not used)
 - The event schedule message from the organisers
+- The organisers' official template `Prompt-ae-thon_Project_Presentation_Template.pptx` (prompt 18)
 - 2 screenshots of our running prototype (Live Demo and Buyer pages), shared while testing (prompts 8 and 11)
 
 ## 5. Prompts (in order, verbatim)
@@ -226,13 +230,104 @@ Pranshu connected his project folder `C:\Users\PRANSHU GARG\Desktop\khet\khetkam
 
 **AI output:** Wrote this updated `disclosure_log.md` straight into the connected project folder on Pranshu's laptop. It used the Claude desktop app's device tools (`device_list_dir` to check the existing file, `device_commit_files` to write it). No other files changed.
 
-> **Note:** Prompts 5–14 produced explanations only. No code was changed after the zip was delivered at about 11:25 AM. The payment (escrow) and anti-fraud designs in prompts 11, 13 and 14 are AI-suggested proposals for the pitch, not features of the prototype.
+### Prompt 17 — reformat the PPT for the 2–4 PM slot (Pranshu, 2:00 PM)
+Attachment: `KhetKamai_Vibe_Coders.pdf` (our Round 1 deck)
+
+> based on the chats and the prototype created , alter the ppt for time slot 2-4:-
+>
+> 🕑 2 PM – 4 PM | PPT Formatting
+> Teams must arrange their existing presentations according to the prescribed format provided by the event organizers .
+
+**AI output:** Asked for the organisers' format and the file type. Pranshu chose "I'll paste/attach it" and "PowerPoint (.pptx)".
+
+### Prompt 18 — the organisers' format (Pranshu, 2:04 PM)
+Attachment: `Prompt-ae-thon_Project_Presentation_Template.pptx` (official 6-slide template)
+
+> this is the format
+
+**AI output:** `KhetKamai_Vibe_Coders_Prompt-ae-thon.pptx` (plus a PDF copy). It fills the official template's 6 slides (Team, Problem, Our Idea, USP, How it works, Impact & next steps) with content from our deck, this chat and the prototype.
+
+- The template's fonts, colours and slide numbering are kept.
+- The template's auto-shrink was turned off on edited text boxes so text stays readable. Card sizes were adjusted to fit.
+- On slide 5, the three cards are stacked on the left. A cropped screenshot of our running prototype, taken by Pranshu during testing, is on the right. This follows the template's own note to "add a screenshot or diagram".
+- Speaker notes were rewritten as a talk track for each slide.
+- Pilot numbers stay labelled as targets/assumptions.
+
+### Prompt 19 — presentation speech (Pranshu, 21 Oct, 3:15 PM)
+
+> give me a speech for presenting this in front of judges in 5-6 min
+
+**AI output:** A ~5½-minute script for the 6 slides with a live-demo walkthrough, a split for 4 speakers, and short answers to likely judge questions. No code changed.
+
+### Prompt 20 — why buyers want parali (Pranshu, 21 Oct, 3:17 PM)
+
+> what do buyers do from the crop redidue?
+> like why is there demand for buying parali?
+
+**AI output:** Listed uses of paddy straw (Bio-CNG, 2G ethanol, co-firing in thermal power plants, pellets, paper, mushroom, feed) and why demand is rising. Used **WebSearch** and **WebFetch** to check facts. Sources cited in the answer:
+- Indian Chemical News: Panipat 2G ethanol plant, ~2 lakh t rice straw/yr
+- Energetica India: 71 thermal plants co-firing, CAQM
+- Business Standard: 11 NCR plants directed to co-fire 5–10% biomass
+
+No code changed.
+
+### Prompt 21 — tech stack (Pranshu, 21 Oct, 3:50 PM)
+
+> what tech stack has been used for the prototype?
+
+**AI output:** A table of the prototype's stack and the planned production stack (from our deck). No code changed.
+
+### Prompt 22 — PPT file format (Pranshu, 21 Oct, 3:52 PM)
+
+> you gave me ppt as pdf
+> give ppt format
+
+**AI output:** Re-sent `KhetKamai_Vibe_Coders_Prompt-ae-thon.pptx` on its own and saved a copy to the project folder on the laptop through the Claude desktop app device tools. The deck itself was not changed.
+
+### Prompt 23 — optimise the prototype (Pranshu, 23 Oct, 10:27 AM)
+
+> now i have 30 min to optimise the prototype
+> tell me how can i do it?
+
+**AI output:** Code changes, built and tested in a headless browser (full loop, no errors, Live page fits 1366×768):
+1. **Escrow (simulated):** when the farmer accepts, the buyer "pre-pays" the estimate + 10% into KhetKamai escrow. This shows in the activity feed, the farmer's pickup card (Hindi/English) and the agent's pay screen ("no cash from your pocket").
+2. **Factory weighbridge check (simulated):** ~4.5 s after payment, the buyer's scale re-weighs the load. Within 3% of the agent's weight → "✓ Weighbridge" on the Live and Buyer pages and in the feed. Otherwise → "mismatch, agent fee held".
+3. **Two more buyers** (fictional): Haryana 2G Ethanol Refinery and NCR Thermal Power (co-firing). The distance filter now goes to 100 km.
+4. **Opening offers follow the mandi rate** set in Settings (previously fixed at ₹1,450 / ₹1,380).
+5. **Faster first load:** pages are lazy-loaded. The main JavaScript file went from ~1,000 kB to ~350 kB.
+6. Demo data storage key changed to `khetkamai-demo-v2`, so the new buyers load automatically.
+
+Files changed: `src/App.tsx`, `src/store.ts`, `src/data/seed.ts`, `src/lib/pricing.ts`, `src/lib/bot.ts`, `src/lib/i18n.ts`, `src/components/Layout.tsx`, `src/components/Shared.tsx`, `src/components/ChatCards.tsx`, `src/pages/Live.tsx`, `src/pages/Buyer.tsx`.
+
+### Prompt 24 — apply changes on the laptop (Pranshu, 23 Oct, 10:32 AM)
+Pranshu re-connected the project folder through the Claude desktop app.
+
+> make the new changes directly in the file
+
+**AI output:** Checked that the laptop's copies of the 11 source files matched the original Round 1 zip, so no team edits would be overwritten. Then wrote the updated files from prompt 23, this log and the rebuilt `dist` folder straight into `Desktop\khet\khetkamai`, using the device tools (`device_stage_files`, `device_commit_files`).
+
+### Prompt 25 — check and update the PPT (Pranshu, 23 Oct, 10:55 AM)
+Attachment: `newppt.pptx` (the team's current deck; content identical to the deck from prompt 18)
+
+> see if any changes are required in the ppt and if yes then do it
+
+**AI output:** `KhetKamai_Vibe_Coders_final.pptx`, updated to match the prompt-23 prototype:
+- **Slide 3:** "Who it is for" now names Bio-CNG, 2G ethanol and power plants. "Why now" mentions power plants near Delhi having to burn biomass with coal.
+- **Slide 4:** "Trust built in" now covers buyer escrow, pay on weighing and the factory scale re-check.
+- **Slide 5:** Key features add escrow and the weighbridge check. The prototype screenshot was replaced with a fresh headless-browser capture after a demo sale, showing the escrow notice, UPI payment and "Weighbridge … ✓ within 3%", with the caption updated.
+- Speaker notes for slides 3–5 were rewritten.
+- Layout, template and the other slides are unchanged. The file was validated, and slides were rendered to check text fit.
+
+> **Note:**
+> - Prompts 5–14 and 19–22 produced explanations only (no code changes).
+> - The escrow and weighbridge ideas from prompts 11, 13 and 14 were added to the prototype in prompt 23 as **simulations**. No real money, payment gateway or weighbridge is connected.
+> - The other anti-fraud ideas (GPS photos, security deposit, audits) remain pitch proposals only.
 
 > **Team:** add any further prompts below (for example from the 2–4 PM PPT formatting slot), with time, author, tool and model.
 
 | # | Time | Who | Tool / model | Prompt |
 |---|---|---|---|---|
-| 17 | | | | |
+| 26 | | | | |
 
 ## 6. Open-source projects used in the app
 

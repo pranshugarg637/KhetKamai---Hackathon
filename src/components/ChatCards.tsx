@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { ScanSearch, Truck, Phone, Users, BadgeCheck, Leaf, Wheat, Droplets } from 'lucide-react'
+import { ScanSearch, Truck, Phone, Users, BadgeCheck, Leaf, Wheat, Droplets, ShieldCheck } from 'lucide-react'
 import { useStore } from '../store'
 import type { GradeDetails, Lang } from '../data/seed'
 import { t } from '../lib/i18n'
@@ -195,6 +195,9 @@ export function PickupCard({ listingId, lang }: { listingId: string; lang: Lang 
         </div>
       </div>
       <div className="mt-2 space-y-1 text-[12px]">
+        {listing.escrow && (
+          <div className="flex items-start gap-1.5 rounded-md bg-mustard/20 px-1.5 py-1 font-semibold text-[#6d4a05]"><ShieldCheck size={14} className="mt-0.5 shrink-0" /> {t('escrowLocked', lang, { amount: listing.escrow.toLocaleString('en-IN') })}</div>
+        )}
         <div className="flex items-start gap-1.5"><BadgeCheck size={14} className="mt-0.5 shrink-0 text-leaf" /> {t('payAfter', lang)}</div>
         <div className="flex items-start gap-1.5"><Users size={14} className="mt-0.5 shrink-0 text-leaf" /> {t('cluster', lang)}</div>
       </div>
